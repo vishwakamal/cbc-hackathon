@@ -29,7 +29,7 @@ function ScoreBadge({ score, status }) {
 
 function CheckInResult({ result }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm p-5 mt-4 animate-in">
+    <div className="bg-white rounded-xl shadow-sm p-5 mt-4">
       <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4 text-center">Your Recovery Score</h3>
       <ScoreBadge score={result.score} status={result.status} />
       <div className="border-t border-gray-100 pt-4 mt-4">
@@ -57,7 +57,7 @@ function CheckInResult({ result }) {
   );
 }
 
-export default function CheckInTab({ apiKey }) {
+export default function CheckInTab() {
   const [soreness, setSoreness] = useState(5);
   const [sleep, setSleep] = useState(5);
   const [load, setLoad] = useState('Moderate');
@@ -67,16 +67,12 @@ export default function CheckInTab({ apiKey }) {
   const [result, setResult] = useState(null);
 
   const handleSubmit = async () => {
-    if (!apiKey) {
-      setError('Please enter your Anthropic API key above.');
-      return;
-    }
     setLoading(true);
     setError(null);
     setResult(null);
     try {
       const { systemPrompt, userMessage } = getCheckInPrompt({ soreness, sleep, load, area });
-      const data = await callClaude(systemPrompt, userMessage, apiKey);
+      const data = await callClaude(systemPrompt, userMessage);
       setResult(data);
     } catch (err) {
       setError(err.message);

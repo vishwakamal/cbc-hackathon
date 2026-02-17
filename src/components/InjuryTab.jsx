@@ -4,20 +4,10 @@ import LoadingSpinner from './LoadingSpinner';
 import ErrorCard from './ErrorCard';
 import Disclaimer from './Disclaimer';
 import IcingTimer from './IcingTimer';
+import BodyMap from './BodyMap';
 import { callClaude, getInjuryPrompt } from '../api';
 
-const BODY_PARTS = ['Ankle', 'Knee', 'Shoulder', 'Wrist', 'Back', 'Hip', 'Other'];
 const TIMING_OPTIONS = ['Just now', 'Today', 'A few days ago'];
-
-const BODY_PART_ICONS = {
-  Ankle: '🦶',
-  Knee: '🦵',
-  Shoulder: '💪',
-  Wrist: '🤚',
-  Back: '🔙',
-  Hip: '🏃',
-  Other: '🩹',
-};
 
 function RiceCards({ riceSummary }) {
   const cards = [
@@ -59,7 +49,7 @@ function RecoveryTimeline({ days }) {
 
 function InjuryResult({ result }) {
   return (
-    <div className="mt-4 space-y-4 animate-in">
+    <div className="mt-4 space-y-4">
       {result.urgentFlag && (
         <div className="bg-red-light border-2 border-red rounded-xl p-4 flex items-start gap-3">
           <span className="text-red text-2xl">&#9888;</span>
@@ -116,7 +106,7 @@ function InjuryResult({ result }) {
   );
 }
 
-export default function InjuryTab({ apiKey }) {
+export default function InjuryTab() {
   const [bodyPart, setBodyPart] = useState('');
   const [mechanism, setMechanism] = useState('');
   const [pain, setPain] = useState(5);
@@ -127,12 +117,8 @@ export default function InjuryTab({ apiKey }) {
   const [result, setResult] = useState(null);
 
   const handleSubmit = async () => {
-    if (!apiKey) {
-      setError('Please enter your Anthropic API key above.');
-      return;
-    }
     if (!bodyPart) {
-      setError('Please select a body part.');
+      setError('Please tap a body part on the map above.');
       return;
     }
     if (!mechanism.trim()) {
@@ -150,7 +136,7 @@ export default function InjuryTab({ apiKey }) {
         swelling,
         timing,
       });
-      const data = await callClaude(systemPrompt, userMessage, apiKey);
+      const data = await callClaude(systemPrompt, userMessage);
       setResult(data);
     } catch (err) {
       setError(err.message);
@@ -164,25 +150,10 @@ export default function InjuryTab({ apiKey }) {
       <div className="bg-white rounded-xl shadow-sm p-5 mb-4">
         <h2 className="text-lg font-bold text-navy mb-4">What happened?</h2>
 
-        {/* Body part selector */}
+        {/* SVG Body map */}
         <div className="mb-5">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Body Part Injured</label>
-          <div className="grid grid-cols-4 gap-2">
-            {BODY_PARTS.map((part) => (
-              <button
-                key={part}
-                onClick={() => setBodyPart(part)}
-                className={`flex flex-col items-center gap-1 py-3 px-2 rounded-xl text-xs font-medium transition-all ${
-                  bodyPart === part
-                    ? 'bg-navy text-white shadow-md scale-105'
-                    : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
-                }`}
-              >
-                <span className="text-lg">{BODY_PART_ICONS[part]}</span>
-                <span>{part}</span>
-              </button>
-            ))}
-          </div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Where does it hurt?</label>
+          <BodyMap selected={bodyPart} onSelect={setBodyPart} />
         </div>
 
         {/* How it happened */}
