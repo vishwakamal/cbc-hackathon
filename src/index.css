@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Enable class-based dark mode for Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-navy: #1E3A5F;
   --color-navy-light: #2A4F7F;
@@ -12,11 +15,26 @@
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
+/* CSS variables for SVG body map silhouette — toggled by html.dark */
+:root {
+  --body-fill: #E2E8F0;
+  --body-stroke: #CBD5E0;
+}
+
+html.dark {
+  --body-fill: #374151;
+  --body-stroke: #4B5563;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: #F7F8FA;
   min-height: 100vh;
   margin: 0;
+}
+
+html.dark body {
+  background-color: #111827;
 }
 
 input[type="range"] {
@@ -27,6 +45,10 @@ input[type="range"] {
   border-radius: 4px;
   background: #E2E8F0;
   outline: none;
+}
+
+html.dark input[type="range"] {
+  background: #374151;
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -41,6 +63,10 @@ input[type="range"]::-webkit-slider-thumb {
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
+html.dark input[type="range"]::-webkit-slider-thumb {
+  border-color: #1F2937;
+}
+
 input[type="range"]::-moz-range-thumb {
   width: 24px;
   height: 24px;
@@ -49,6 +75,15 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
   border: 3px solid white;
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+html.dark input[type="range"]::-moz-range-thumb {
+  border-color: #1F2937;
+}
+
+/* iPhone notch / home-bar safe area */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 3rem);
 }
 
 @keyframes pulse-slow {

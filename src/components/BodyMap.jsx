@@ -55,10 +55,10 @@ function BodyZone({ region, selected, onClick }) {
   return <rect x={region.x} y={region.y} width={region.width} height={region.height} rx={region.rx || 0} {...sharedProps} />;
 }
 
-// Simple humanoid silhouette paths (fill with light gray, no interaction)
+// Simple humanoid silhouette paths (fill with CSS var so dark mode works automatically)
 function BodySilhouette() {
-  const fill = '#E2E8F0';
-  const stroke = '#CBD5E0';
+  const fill = 'var(--body-fill)';
+  const stroke = 'var(--body-stroke)';
   const sw = 1;
   return (
     <g pointerEvents="none">
@@ -113,7 +113,7 @@ export default function BodyMap({ selected, onSelect }) {
             key={v}
             onClick={() => { setView(v); onSelect(''); }}
             className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-colors capitalize ${
-              view === v ? 'bg-navy text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+              view === v ? 'bg-navy text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
             }`}
           >
             {v === 'front' ? '⬆ Front' : '⬇ Back'}
@@ -149,7 +149,7 @@ export default function BodyMap({ selected, onSelect }) {
             {selected}
           </span>
         ) : (
-          <span className="text-xs text-gray-400">Tap a body part above</span>
+          <span className="text-xs text-gray-400 dark:text-gray-500">Tap a body part above</span>
         )}
       </div>
     </div>

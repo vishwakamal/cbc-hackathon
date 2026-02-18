@@ -19,24 +19,24 @@ function ScoreBadge({ score, status }) {
 
   return (
     <div className="flex flex-col items-center mb-4">
-      <div className={`w-24 h-24 rounded-full ${color.bg} ring-4 ${color.ring} ring-offset-4 flex items-center justify-center mb-3`}>
+      <div className={`w-24 h-24 rounded-full ${color.bg} ring-4 ${color.ring} ring-offset-4 dark:ring-offset-gray-800 flex items-center justify-center mb-3`}>
         <span className="text-3xl font-bold text-white">{score}</span>
       </div>
-      <span className="text-lg font-bold text-navy">{status}</span>
+      <span className="text-lg font-bold text-navy dark:text-blue-300">{status}</span>
     </div>
   );
 }
 
 function CheckInResult({ result }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm p-5 mt-4">
-      <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4 text-center">Your Recovery Score</h3>
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5 mt-4">
+      <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4 text-center">Your Recovery Score</h3>
       <ScoreBadge score={result.score} status={result.status} />
-      <div className="border-t border-gray-100 pt-4 mt-4">
-        <h4 className="text-sm font-semibold text-gray-700 mb-2">Recovery Tips</h4>
+      <div className="border-t border-gray-100 dark:border-gray-700 pt-4 mt-4">
+        <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Recovery Tips</h4>
         <ul className="space-y-2">
           {result.tips.map((tip, i) => (
-            <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+            <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
               <span className="text-green mt-0.5">&#10003;</span>
               <span>{tip}</span>
             </li>
@@ -44,11 +44,11 @@ function CheckInResult({ result }) {
         </ul>
       </div>
       {result.seeDoctorFlag && (
-        <div className="bg-red-light border border-red rounded-lg p-4 mt-4 flex items-start gap-3">
+        <div className="bg-red-light dark:bg-red-950/40 border border-red rounded-lg p-4 mt-4 flex items-start gap-3">
           <span className="text-red text-xl">&#9888;</span>
           <div>
             <p className="text-red font-bold text-sm">See a Doctor</p>
-            <p className="text-sm text-gray-700 mt-1">{result.seeDoctorReason}</p>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">{result.seeDoctorReason}</p>
           </div>
         </div>
       )}
@@ -83,13 +83,13 @@ export default function CheckInTab() {
 
   return (
     <div>
-      <div className="bg-white rounded-xl shadow-sm p-5 mb-4">
-        <h2 className="text-lg font-bold text-navy mb-4">How are you feeling today?</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5 mb-4 transition-colors duration-200">
+        <h2 className="text-lg font-bold text-navy dark:text-blue-300 mb-4">How are you feeling today?</h2>
         <SliderInput label="Soreness Level" value={soreness} onChange={setSoreness} />
         <SliderInput label="Sleep Quality" value={sleep} onChange={setSleep} />
 
         <div className="mb-5">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Training Load Today</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Training Load Today</label>
           <div className="grid grid-cols-4 gap-2">
             {TRAINING_LOADS.map((option) => (
               <button
@@ -98,7 +98,7 @@ export default function CheckInTab() {
                 className={`py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
                   load === option
                     ? 'bg-navy text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 {option}
@@ -108,13 +108,13 @@ export default function CheckInTab() {
         </div>
 
         <div className="mb-5">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Area of Soreness (optional)</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Area of Soreness (optional)</label>
           <input
             type="text"
             value={area}
             onChange={(e) => setArea(e.target.value)}
             placeholder="e.g., lower back, left knee..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-navy dark:focus:ring-blue-400 focus:border-transparent"
           />
         </div>
 
