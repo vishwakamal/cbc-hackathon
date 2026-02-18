@@ -20,10 +20,10 @@ function RiceCards({ riceSummary }) {
   return (
     <div className="grid grid-cols-2 gap-3 mb-4">
       {cards.map(({ key, label, icon }) => (
-        <div key={key} className="bg-gray-50 rounded-xl p-4 text-center">
+        <div key={key} className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 text-center">
           <span className="text-2xl mb-2 block">{icon}</span>
-          <h5 className="text-sm font-bold text-navy mb-1">{label}</h5>
-          <p className="text-xs text-gray-600 leading-relaxed">{riceSummary[key]}</p>
+          <h5 className="text-sm font-bold text-navy dark:text-blue-300 mb-1">{label}</h5>
+          <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">{riceSummary[key]}</p>
         </div>
       ))}
     </div>
@@ -33,14 +33,14 @@ function RiceCards({ riceSummary }) {
 function RecoveryTimeline({ days }) {
   return (
     <div className="mb-4">
-      <h4 className="text-sm font-semibold text-gray-700 mb-2">Recovery Timeline</h4>
-      <div className="bg-gray-50 rounded-lg p-3 flex items-center gap-3">
+      <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Recovery Timeline</h4>
+      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 flex items-center gap-3">
         <div className="w-10 h-10 bg-green rounded-full flex items-center justify-center flex-shrink-0">
           <span className="text-white text-lg">&#128337;</span>
         </div>
         <div>
-          <p className="text-sm font-medium text-navy">Estimated: {days}</p>
-          <p className="text-xs text-gray-500">With proper rest and treatment</p>
+          <p className="text-sm font-medium text-navy dark:text-blue-300">Estimated: {days}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">With proper rest and treatment</p>
         </div>
       </div>
     </div>
@@ -51,19 +51,19 @@ function InjuryResult({ result }) {
   return (
     <div className="mt-4 space-y-4">
       {result.urgentFlag && (
-        <div className="bg-red-light border-2 border-red rounded-xl p-4 flex items-start gap-3">
+        <div className="bg-red-light dark:bg-red-950/40 border-2 border-red rounded-xl p-4 flex items-start gap-3">
           <span className="text-red text-2xl">&#9888;</span>
           <div>
             <p className="text-red font-bold">Seek Immediate Medical Attention</p>
-            <p className="text-sm text-gray-700 mt-1">
+            <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
               Based on your description, this injury may require professional medical evaluation.
             </p>
           </div>
         </div>
       )}
 
-      <div className="bg-white rounded-xl shadow-sm p-5">
-        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4 text-center">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5">
+        <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4 text-center">
           RICE Treatment Plan
         </h3>
         <RiceCards riceSummary={result.riceSummary} />
@@ -71,14 +71,14 @@ function InjuryResult({ result }) {
 
       <IcingTimer intervalMinutes={result.icingIntervalMinutes || 20} />
 
-      <div className="bg-white rounded-xl shadow-sm p-5">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5">
         <RecoveryTimeline days={result.recoveryTimelineDays} />
 
         <div className="mb-4">
-          <h4 className="text-sm font-semibold text-gray-700 mb-2">What to Avoid</h4>
+          <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">What to Avoid</h4>
           <ul className="space-y-1">
             {result.avoid.map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+              <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                 <span className="text-red mt-0.5">&#10007;</span>
                 <span>{item}</span>
               </li>
@@ -86,13 +86,13 @@ function InjuryResult({ result }) {
           </ul>
         </div>
 
-        <div className="bg-red-light border border-red rounded-lg p-4">
+        <div className="bg-red-light dark:bg-red-950/40 border border-red rounded-lg p-4">
           <h4 className="text-sm font-bold text-red mb-2 flex items-center gap-2">
             <span>&#9888;</span> When to See a Doctor
           </h4>
           <ul className="space-y-1">
             {result.seeDoctorConditions.map((cond, i) => (
-              <li key={i} className="text-sm text-gray-700 flex items-start gap-2">
+              <li key={i} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2">
                 <span className="text-red">&#8226;</span>
                 <span>{cond}</span>
               </li>
@@ -147,24 +147,24 @@ export default function InjuryTab() {
 
   return (
     <div>
-      <div className="bg-white rounded-xl shadow-sm p-5 mb-4">
-        <h2 className="text-lg font-bold text-navy mb-4">What happened?</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5 mb-4 transition-colors duration-200">
+        <h2 className="text-lg font-bold text-navy dark:text-blue-300 mb-4">What happened?</h2>
 
         {/* SVG Body map */}
         <div className="mb-5">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Where does it hurt?</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Where does it hurt?</label>
           <BodyMap selected={bodyPart} onSelect={setBodyPart} />
         </div>
 
         {/* How it happened */}
         <div className="mb-5">
-          <label className="block text-sm font-medium text-gray-700 mb-2">How did it happen?</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">How did it happen?</label>
           <input
             type="text"
             value={mechanism}
             onChange={(e) => setMechanism(e.target.value)}
             placeholder="e.g., twisted landing, overuse, collision..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-navy dark:focus:ring-blue-400 focus:border-transparent"
           />
         </div>
 
@@ -173,7 +173,7 @@ export default function InjuryTab() {
 
         {/* Swelling toggle */}
         <div className="mb-5">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Swelling Present?</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Swelling Present?</label>
           <div className="flex gap-3">
             {['Yes', 'No'].map((option) => (
               <button
@@ -182,7 +182,7 @@ export default function InjuryTab() {
                 className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
                   swelling === option
                     ? 'bg-navy text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 {option}
@@ -193,7 +193,7 @@ export default function InjuryTab() {
 
         {/* When did it happen */}
         <div className="mb-5">
-          <label className="block text-sm font-medium text-gray-700 mb-2">When did it happen?</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">When did it happen?</label>
           <div className="grid grid-cols-3 gap-2">
             {TIMING_OPTIONS.map((option) => (
               <button
@@ -202,7 +202,7 @@ export default function InjuryTab() {
                 className={`py-2 px-3 rounded-lg text-xs font-medium transition-colors ${
                   timing === option
                     ? 'bg-navy text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 {option}
