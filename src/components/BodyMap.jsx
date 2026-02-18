@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-// Each region: id, label, type (ellipse|rect), and shape coords
 const FRONT_REGIONS = [
   { id: 'Head',          label: 'Head',         type: 'ellipse', cx: 80,  cy: 27,  rx: 24, ry: 26 },
   { id: 'L. Shoulder',   label: 'L. Shoulder',  type: 'ellipse', cx: 44,  cy: 67,  rx: 20, ry: 16 },
@@ -35,15 +34,19 @@ const BACK_REGIONS = [
 function BodyZone({ region, selected, onClick }) {
   const [hovered, setHovered] = useState(false);
   const isSelected = selected === region.id;
-  const fill = isSelected ? '#1E3A5F' : hovered ? '#93C5FD' : 'transparent';
-  const opacity = isSelected ? 0.75 : hovered ? 0.5 : 0;
+
+  // Selected = vivid red, hovered = soft blue, idle = transparent
+  const fill    = isSelected ? '#E53E3E' : hovered ? '#93C5FD' : 'transparent';
+  const opacity = isSelected ? 0.65      : hovered ? 0.4       : 0;
+  const stroke  = isSelected ? '#C53030' : '#94A3B8';
+
   const sharedProps = {
     fill,
     fillOpacity: opacity,
-    stroke: isSelected ? '#1E3A5F' : '#94A3B8',
+    stroke,
     strokeWidth: isSelected ? 2 : 1,
     strokeDasharray: isSelected ? 'none' : '3 2',
-    style: { cursor: 'pointer', transition: 'fill-opacity 0.15s' },
+    style: { cursor: 'pointer', transition: 'fill-opacity 0.12s, fill 0.12s' },
     onClick: () => onClick(region.id),
     onMouseEnter: () => setHovered(true),
     onMouseLeave: () => setHovered(false),
@@ -55,47 +58,47 @@ function BodyZone({ region, selected, onClick }) {
   return <rect x={region.x} y={region.y} width={region.width} height={region.height} rx={region.rx || 0} {...sharedProps} />;
 }
 
-// Simple humanoid silhouette paths (fill with CSS var so dark mode works automatically)
+// Improved anatomical silhouette — tapered polygons instead of plain rects
 function BodySilhouette() {
-  const fill = 'var(--body-fill)';
-  const stroke = 'var(--body-stroke)';
-  const sw = 1;
+  const f  = 'var(--body-fill)';
+  const s  = 'var(--body-stroke)';
+  const sw = 1.2;
+
   return (
     <g pointerEvents="none">
       {/* Head */}
-      <ellipse cx="80" cy="27" rx="22" ry="24" fill={fill} stroke={stroke} strokeWidth={sw} />
-      {/* Neck */}
-      <rect x="73" y="49" width="14" height="12" rx="3" fill={fill} stroke={stroke} strokeWidth={sw} />
-      {/* Left shoulder */}
-      <ellipse cx="47" cy="67" rx="17" ry="12" fill={fill} stroke={stroke} strokeWidth={sw} />
-      {/* Right shoulder */}
-      <ellipse cx="113" cy="67" rx="17" ry="12" fill={fill} stroke={stroke} strokeWidth={sw} />
-      {/* Torso */}
-      <rect x="55" y="60" width="50" height="108" rx="6" fill={fill} stroke={stroke} strokeWidth={sw} />
-      {/* Left upper arm */}
-      <rect x="29" y="62" width="17" height="52" rx="6" fill={fill} stroke={stroke} strokeWidth={sw} />
-      {/* Right upper arm */}
-      <rect x="114" y="62" width="17" height="52" rx="6" fill={fill} stroke={stroke} strokeWidth={sw} />
-      {/* Left forearm */}
-      <rect x="27" y="116" width="14" height="50" rx="6" fill={fill} stroke={stroke} strokeWidth={sw} />
-      {/* Right forearm */}
-      <rect x="119" y="116" width="14" height="50" rx="6" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <ellipse cx="80" cy="27" rx="21" ry="23" fill={f} stroke={s} strokeWidth={sw} />
+      {/* Neck — slightly tapered */}
+      <polygon points="75,49 85,49 87,62 73,62" fill={f} stroke={s} strokeWidth={sw} />
+      {/* Torso — wide shoulders, narrowed waist, slight hip flare */}
+      <polygon
+        points="73,62 87,62 115,68 111,104 108,132 110,168 50,168 52,132 49,104 45,68"
+        fill={f} stroke={s} strokeWidth={sw}
+      />
+      {/* Left upper arm — tapered */}
+      <polygon points="30,66 46,66 43,128 31,128" fill={f} stroke={s} strokeWidth={sw} />
+      {/* Right upper arm — tapered */}
+      <polygon points="114,66 130,66 129,128 117,128" fill={f} stroke={s} strokeWidth={sw} />
+      {/* Left forearm — narrower */}
+      <polygon points="30,130 43,130 41,174 28,174" fill={f} stroke={s} strokeWidth={sw} />
+      {/* Right forearm — narrower */}
+      <polygon points="117,130 130,130 132,174 119,174" fill={f} stroke={s} strokeWidth={sw} />
       {/* Left hand */}
-      <ellipse cx="32" cy="173" rx="11" ry="14" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <ellipse cx="34" cy="183" rx="12" ry="13" fill={f} stroke={s} strokeWidth={sw} />
       {/* Right hand */}
-      <ellipse cx="128" cy="173" rx="11" ry="14" fill={fill} stroke={stroke} strokeWidth={sw} />
-      {/* Left thigh */}
-      <rect x="55" y="168" width="22" height="72" rx="6" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <ellipse cx="126" cy="183" rx="12" ry="13" fill={f} stroke={s} strokeWidth={sw} />
+      {/* Left thigh — gently tapered */}
+      <polygon points="51,170 79,170 77,242 53,242" fill={f} stroke={s} strokeWidth={sw} />
       {/* Right thigh */}
-      <rect x="83" y="168" width="22" height="72" rx="6" fill={fill} stroke={stroke} strokeWidth={sw} />
-      {/* Left shin */}
-      <rect x="53" y="242" width="20" height="72" rx="6" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <polygon points="81,170 109,170 107,242 83,242" fill={f} stroke={s} strokeWidth={sw} />
+      {/* Left shin — more tapered */}
+      <polygon points="52,244 76,244 72,316 56,316" fill={f} stroke={s} strokeWidth={sw} />
       {/* Right shin */}
-      <rect x="81" y="242" width="20" height="72" rx="6" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <polygon points="84,244 108,244 104,316 88,316" fill={f} stroke={s} strokeWidth={sw} />
       {/* Left foot */}
-      <ellipse cx="60" cy="320" rx="16" ry="10" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <ellipse cx="63" cy="322" rx="18" ry="10" fill={f} stroke={s} strokeWidth={sw} />
       {/* Right foot */}
-      <ellipse cx="88" cy="320" rx="16" ry="10" fill={fill} stroke={stroke} strokeWidth={sw} />
+      <ellipse cx="97" cy="322" rx="18" ry="10" fill={f} stroke={s} strokeWidth={sw} />
     </g>
   );
 }
@@ -112,8 +115,10 @@ export default function BodyMap({ selected, onSelect }) {
           <button
             key={v}
             onClick={() => { setView(v); onSelect(''); }}
-            className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-colors capitalize ${
-              view === v ? 'bg-navy text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+            className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-colors capitalize coach:py-2.5 coach:text-sm ${
+              view === v
+                ? 'bg-navy text-white shadow-sm'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
             }`}
           >
             {v === 'front' ? '⬆ Front' : '⬇ Back'}
@@ -121,14 +126,13 @@ export default function BodyMap({ selected, onSelect }) {
         ))}
       </div>
 
-      {/* SVG body map */}
+      {/* SVG — responsive width */}
       <div className="flex justify-center">
         <svg
           viewBox="0 0 160 340"
-          width="180"
-          height="382"
+          className="w-[160px] sm:w-[190px]"
+          style={{ height: 'auto', display: 'block' }}
           xmlns="http://www.w3.org/2000/svg"
-          style={{ display: 'block' }}
         >
           <BodySilhouette />
           {regions.map((region) => (
@@ -143,13 +147,13 @@ export default function BodyMap({ selected, onSelect }) {
       </div>
 
       {/* Selected label */}
-      <div className="text-center mt-2 min-h-[1.5rem]">
+      <div className="text-center mt-2 min-h-[1.75rem]">
         {selected ? (
-          <span className="inline-block bg-navy text-white text-xs font-semibold px-3 py-1 rounded-full">
-            {selected}
+          <span className="inline-flex items-center gap-1.5 bg-red text-white text-xs font-semibold px-3 py-1 rounded-full shadow-sm coach:text-sm coach:px-4 coach:py-1.5">
+            <span>📍</span> {selected}
           </span>
         ) : (
-          <span className="text-xs text-gray-400 dark:text-gray-500">Tap a body part above</span>
+          <span className="text-xs text-gray-400 dark:text-gray-500 coach:text-sm">Tap a body part above</span>
         )}
       </div>
     </div>
