@@ -143,7 +143,7 @@ function InjuryResult({ result }) {
 
 // ── Main tab ──────────────────────────────────────────────────────────────────
 export default function InjuryTab({ recentInjuries = [], onNewInjury }) {
-  const [bodyPart, setBodyPart] = useState('');
+  const [bodyParts, setBodyParts] = useState([]);
   const [mechanism, setMechanism] = useState('');
   const [pain, setPain] = useState(5);
   const [swelling, setSwelling] = useState('No');
@@ -152,17 +152,21 @@ export default function InjuryTab({ recentInjuries = [], onNewInjury }) {
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
 
+  const handleToggle = (id) =>
+    setBodyParts((prev) => prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]);
+  const handleClearAll = () => setBodyParts([]);
+
   const handleSubmit = async () => {
-    if (!bodyPart) { setError('Please tap a body part on the map above.'); return; }
+    if (bodyParts.length === 0) { setError('Please tap a body part on the map above.'); return; }
     if (!mechanism.trim()) { setError('Please describe how the injury happened.'); return; }
     setLoading(true);
     setError(null);
     setResult(null);
     try {
-      const { systemPrompt, userMessage } = getInjuryPrompt({ bodyPart, mechanism, pain, swelling, timing });
+      const { systemPrompt, userMessage } = getInjuryPrompt({ bodyParts, mechanism, pain, swelling, timing });
       const data = await callClaude(systemPrompt, userMessage);
       setResult(data);
-      onNewInjury?.(bodyPart, data);
+      onNewInjury?.(bodyParts.join(', '), data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -183,7 +187,7 @@ export default function InjuryTab({ recentInjuries = [], onNewInjury }) {
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 coach:text-base">
             Where does it hurt?
           </label>
-          <BodyMap selected={bodyPart} onSelect={setBodyPart} />
+          <BodyMap selected={bodyParts} onToggle={handleToggle} onClearAll={handleClearAll} />
         </div>
 
         {/* How it happened */}

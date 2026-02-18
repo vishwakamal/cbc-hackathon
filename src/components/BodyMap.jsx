@@ -31,11 +31,11 @@ const BACK_REGIONS = [
   { id: 'R. Elbow',      label: 'R. Elbow',     type: 'ellipse', cx: 126, cy: 124, rx: 16, ry: 16 },
 ];
 
-function BodyZone({ region, selected, onClick }) {
+// selected is now string[] — a zone is highlighted if its id is in the array
+function BodyZone({ region, selected, onToggle }) {
   const [hovered, setHovered] = useState(false);
-  const isSelected = selected === region.id;
+  const isSelected = selected.includes(region.id);
 
-  // Selected = vivid red, hovered = soft blue, idle = transparent
   const fill    = isSelected ? '#E53E3E' : hovered ? '#93C5FD' : 'transparent';
   const opacity = isSelected ? 0.65      : hovered ? 0.4       : 0;
   const stroke  = isSelected ? '#C53030' : '#94A3B8';
@@ -47,7 +47,7 @@ function BodyZone({ region, selected, onClick }) {
     strokeWidth: isSelected ? 2 : 1,
     strokeDasharray: isSelected ? 'none' : '3 2',
     style: { cursor: 'pointer', transition: 'fill-opacity 0.12s, fill 0.12s' },
-    onClick: () => onClick(region.id),
+    onClick: () => onToggle(region.id),
     onMouseEnter: () => setHovered(true),
     onMouseLeave: () => setHovered(false),
   };
@@ -58,7 +58,6 @@ function BodyZone({ region, selected, onClick }) {
   return <rect x={region.x} y={region.y} width={region.width} height={region.height} rx={region.rx || 0} {...sharedProps} />;
 }
 
-// Improved anatomical silhouette — tapered polygons instead of plain rects
 function BodySilhouette() {
   const f  = 'var(--body-fill)';
   const s  = 'var(--body-stroke)';
@@ -66,46 +65,34 @@ function BodySilhouette() {
 
   return (
     <g pointerEvents="none">
-      {/* Head */}
       <ellipse cx="80" cy="27" rx="21" ry="23" fill={f} stroke={s} strokeWidth={sw} />
-      {/* Neck — slightly tapered */}
       <polygon points="75,49 85,49 87,62 73,62" fill={f} stroke={s} strokeWidth={sw} />
-      {/* Torso — wide shoulders, narrowed waist, slight hip flare */}
-      <polygon
-        points="73,62 87,62 115,68 111,104 108,132 110,168 50,168 52,132 49,104 45,68"
-        fill={f} stroke={s} strokeWidth={sw}
-      />
-      {/* Left upper arm — tapered */}
+      <polygon points="73,62 87,62 115,68 111,104 108,132 110,168 50,168 52,132 49,104 45,68" fill={f} stroke={s} strokeWidth={sw} />
       <polygon points="30,66 46,66 43,128 31,128" fill={f} stroke={s} strokeWidth={sw} />
-      {/* Right upper arm — tapered */}
       <polygon points="114,66 130,66 129,128 117,128" fill={f} stroke={s} strokeWidth={sw} />
-      {/* Left forearm — narrower */}
       <polygon points="30,130 43,130 41,174 28,174" fill={f} stroke={s} strokeWidth={sw} />
-      {/* Right forearm — narrower */}
       <polygon points="117,130 130,130 132,174 119,174" fill={f} stroke={s} strokeWidth={sw} />
-      {/* Left hand */}
       <ellipse cx="34" cy="183" rx="12" ry="13" fill={f} stroke={s} strokeWidth={sw} />
-      {/* Right hand */}
       <ellipse cx="126" cy="183" rx="12" ry="13" fill={f} stroke={s} strokeWidth={sw} />
-      {/* Left thigh — gently tapered */}
       <polygon points="51,170 79,170 77,242 53,242" fill={f} stroke={s} strokeWidth={sw} />
-      {/* Right thigh */}
       <polygon points="81,170 109,170 107,242 83,242" fill={f} stroke={s} strokeWidth={sw} />
-      {/* Left shin — more tapered */}
       <polygon points="52,244 76,244 72,316 56,316" fill={f} stroke={s} strokeWidth={sw} />
-      {/* Right shin */}
       <polygon points="84,244 108,244 104,316 88,316" fill={f} stroke={s} strokeWidth={sw} />
-      {/* Left foot */}
       <ellipse cx="63" cy="322" rx="18" ry="10" fill={f} stroke={s} strokeWidth={sw} />
-      {/* Right foot */}
       <ellipse cx="97" cy="322" rx="18" ry="10" fill={f} stroke={s} strokeWidth={sw} />
     </g>
   );
 }
 
-export default function BodyMap({ selected, onSelect }) {
+// selected: string[]  onToggle(id): adds if absent, removes if present  onClearAll(): clears all
+export default function BodyMap({ selected, onToggle, onClearAll }) {
   const [view, setView] = useState('front');
   const regions = view === 'front' ? FRONT_REGIONS : BACK_REGIONS;
+
+  const handleViewChange = (v) => {
+    setView(v);
+    onClearAll();
+  };
 
   return (
     <div>
@@ -114,7 +101,7 @@ export default function BodyMap({ selected, onSelect }) {
         {['front', 'back'].map((v) => (
           <button
             key={v}
-            onClick={() => { setView(v); onSelect(''); }}
+            onClick={() => handleViewChange(v)}
             className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-colors capitalize coach:py-2.5 coach:text-sm ${
               view === v
                 ? 'bg-navy text-white shadow-sm'
@@ -126,7 +113,7 @@ export default function BodyMap({ selected, onSelect }) {
         ))}
       </div>
 
-      {/* SVG — responsive width */}
+      {/* SVG body map */}
       <div className="flex justify-center">
         <svg
           viewBox="0 0 160 340"
@@ -140,20 +127,40 @@ export default function BodyMap({ selected, onSelect }) {
               key={region.id + view}
               region={region}
               selected={selected}
-              onClick={onSelect}
+              onToggle={onToggle}
             />
           ))}
         </svg>
       </div>
 
-      {/* Selected label */}
-      <div className="text-center mt-2 min-h-[1.75rem]">
-        {selected ? (
-          <span className="inline-flex items-center gap-1.5 bg-red text-white text-xs font-semibold px-3 py-1 rounded-full shadow-sm coach:text-sm coach:px-4 coach:py-1.5">
-            <span>📍</span> {selected}
-          </span>
+      {/* Selected parts chips + clear button */}
+      <div className="mt-3 min-h-[2rem]">
+        {selected.length === 0 ? (
+          <p className="text-xs text-gray-400 dark:text-gray-500 text-center coach:text-sm">
+            Tap one or more body parts above
+          </p>
         ) : (
-          <span className="text-xs text-gray-400 dark:text-gray-500 coach:text-sm">Tap a body part above</span>
+          <div className="flex flex-wrap gap-1.5 justify-center items-center">
+            {selected.map((id) => (
+              <button
+                key={id}
+                onClick={() => onToggle(id)}
+                className="inline-flex items-center gap-1 bg-red text-white text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm hover:bg-red/80 transition-colors coach:text-sm coach:px-3 coach:py-1.5"
+                title={`Tap to deselect ${id}`}
+              >
+                {id}
+                <span className="opacity-75 font-normal text-[10px]">✕</span>
+              </button>
+            ))}
+            {selected.length > 1 && (
+              <button
+                onClick={onClearAll}
+                className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 underline ml-1 coach:text-sm"
+              >
+                Clear all
+              </button>
+            )}
+          </div>
         )}
       </div>
     </div>

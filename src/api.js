@@ -60,11 +60,11 @@ Return exactly this JSON shape:
   return { systemPrompt, userMessage };
 }
 
-export function getInjuryPrompt({ bodyPart, mechanism, pain, swelling, timing }) {
+export function getInjuryPrompt({ bodyParts, mechanism, pain, swelling, timing }) {
   const systemPrompt = `You are a sports medicine assistant providing home treatment guidance. Return ONLY a valid JSON object with no other text.`;
 
   const userMessage = `Injury report:
-- Body part: ${bodyPart}
+- Body parts affected: ${Array.isArray(bodyParts) ? bodyParts.join(', ') : bodyParts}
 - How it happened: ${mechanism}
 - Pain level: ${pain}/10
 - Swelling: ${swelling}
